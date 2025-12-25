@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Assistant | Vaishnavi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .chat-container {
+            height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .user-message {
+            justify-content: flex-end;
+        }
+        
+        .ai-message {
+            justify-content: flex-start;
+        }
+        
+        .message-bubble {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+        }
+        
+        .user-message .message-bubble {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .ai-message .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 50px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .ai-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #4ecdc4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .suggestions {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            flex-wrap: wrap;
+        }
+        
+        .suggestion-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .suggestion-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-robot"></i> AI Chat Assistant</h1>
+            <p>Ask me anything about programming, technology, or web development!</p>
+        </div>
+        
+        <div class="suggestions">
+            <button class="suggestion-btn" onclick="askQuestion(this)">What is Python?</button>
+            <button class="suggestion-btn" onclick="askQuestion(this)">How to learn web development?</button>
+            <button class="suggestion-btn" onclick="askQuestion(this)">Explain machine learning</button>
+            <button class="suggestion-btn" onclick="askQuestion(this)">What is GitHub?</button>
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <!-- Messages appear here -->
+            <div class="message ai-message">
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-bubble">
+                    <strong>AI Assistant:</strong> Hello! I'm your AI assistant. I can help you with programming questions, web development, Python, JavaScript, and more! Try clicking the suggestions or type your question below.
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <input type="text" id="userInput" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i> Send</button>
+        </div>
+    </div>
+    
+    <script>
+        // AI Knowledge Database
+        const aiKnowledge = {
+            "what is python": "Python is a high-level, interpreted programming language known for its simplicity and readability. It's widely used in web development, data science, AI, machine learning, and automation.",
+            
+            "how to learn web development": "Start with HTML, CSS, and JavaScript basics. Then learn a frontend framework like React and a backend language like Python or Node.js. Build projects and practice daily!",
+            
+            "explain machine learning": "Machine Learning is a subset of AI that enables computers to learn from data without being explicitly programmed. Types: Supervised, Unsupervised, and Reinforcement Learning.",
+            
+            "what is github": "GitHub is a platform for version control and collaboration. It lets you and others work together on projects from anywhere. It's essential for developers to share code.",
+            
+            "hello": "Hello! How can I help you today?",
+            
+            "who created you": "I was created by Vaishnavi using JavaScript, HTML, and CSS as a portfolio project!",
+            
+            "what can you do": "I can answer questions about programming, web development, Python, JavaScript, and technology topics. Try asking me anything!",
+            
+            "thank you": "You're welcome! Happy to help. 😊",
+            
+            "default": "I'm not sure about that. Try asking about programming, web development, Python, or GitHub. I'm still learning!"
+        };
+        
+        function addMessage(text, isUser = false) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isUser ? 'message user-message' : 'message ai-message';
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = isUser ? 'user-avatar' : 'ai-avatar';
+            avatarDiv.innerHTML = isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+            bubbleDiv.innerHTML = `<strong>${isUser ? 'You:' : 'AI Assistant:'}</strong> ${text}`;
+            
+            if (isUser) {
+                messageDiv.appendChild(bubbleDiv);
+                messageDiv.appendChild(avatarDiv);
+            } else {
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(bubbleDiv);
+            }
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function getAIResponse(question) {
+            const lowerQuestion = question.toLowerCase().trim();
+            
+            // Check exact matches
+            for (const [key, response] of Object.entries(aiKnowledge)) {
+                if (lowerQuestion.includes(key)) {
+                    return response;
+                }
+            }
+            
+            // Check for keywords
+            if (lowerQuestion.includes('python')) {
+                return "Python is great for beginners! It's used in web development (Django/Flask), data science, AI, and automation.";
+            }
+            else if (lowerQuestion.includes('javascript')) {
+                return "JavaScript is the language of the web! It runs in browsers and can now be used on servers with Node.js.";
+            }
+            else if (lowerQuestion.includes('html') || lowerQuestion.includes('css')) {
+                return "HTML structures web content, CSS styles it. They're the foundation of all websites!";
+            }
+            else if (lowerQuestion.includes('react')) {
+                return "React is a JavaScript library for building user interfaces, maintained by Facebook.";
+            }
+            else if (lowerQuestion.includes('flask')) {
+                return "Flask is a lightweight Python web framework. It's great for building APIs and web applications.";
+            }
+            
+            return aiKnowledge["default"];
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (message === '') return;
+            
+            // Add user message
+            addMessage(message, true);
+            input.value = '';
+            
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai-message';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-bubble">
+                    <i class="fas fa-ellipsis-h"></i> AI is typing...
+                </div>
+            `;
+            document.getElementById('chatContainer').appendChild(typingDiv);
+            
+            // Simulate AI thinking
+            setTimeout(() => {
+                document.getElementById('typingIndicator').remove();
+                const response = getAIResponse(message);
+                addMessage(response);
+            }, 1000 + Math.random() * 1000);
+        }
+        
+        function askQuestion(button) {
+            const question = button.textContent;
+            document.getElementById('userInput').value = question;
+            sendMessage();
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        // Add some initial messages
+        setTimeout(() => {
+            addMessage("Try asking me: 'What is Python?' or 'How do I start learning web development?'");
+        }, 2000);
+    </script>
+</body>
+</html>
