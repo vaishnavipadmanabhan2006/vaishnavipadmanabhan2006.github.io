@@ -100,6 +100,26 @@ portfolio_html = '''<!DOCTYPE html>
                 padding: 10px;
             }
         }
+        
+        /* NEW: AI Button Style */
+        .ai-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 18px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s;
+            margin: 20px 0;
+        }
+        
+        .ai-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(255, 107, 107, 0.6);
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -154,6 +174,19 @@ portfolio_html = '''<!DOCTYPE html>
                     </div>
                 </div>
             </div>
+            
+            <!-- NEW: AI CHAT ASSISTANT BUTTON ADDED HERE -->
+            <div style="text-align: center; margin: 50px 0 30px 0;">
+                <h3 style="color: #667eea; margin-bottom: 25px; font-size: 1.8rem;">
+                    <i class="fas fa-robot"></i> Try My Live AI Assistant
+                </h3>
+                <a href="ai_chat.html" class="ai-btn">
+                    <i class="fas fa-comments"></i> 🤖 Launch AI Chat Assistant
+                </a>
+                <p style="color: #666; margin-top: 20px; font-size: 1.1rem;">
+                    Ask questions about programming, web development, or technology!
+                </p>
+            </div>
         </div>
         
         <div class="section" id="contact">
@@ -189,6 +222,16 @@ portfolio_html = '''<!DOCTYPE html>
                     <a href="#" style="color: #38a169; margin: 0 15px;"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
+        </div>
+        
+        <!-- NEW: Additional call-to-action before footer -->
+        <div style="text-align: center; padding: 40px 20px;">
+            <h3 style="color: white; margin-bottom: 25px; font-size: 1.8rem;">
+                <i class="fas fa-bolt"></i> Ready to Experience AI?
+            </h3>
+            <a href="ai_chat.html" class="ai-btn">
+                <i class="fas fa-rocket"></i> 🚀 Start Chatting with AI
+            </a>
         </div>
         
         <footer style="text-align: center; padding: 40px; color: rgba(255,255,255,0.8);">
@@ -229,6 +272,17 @@ portfolio_html = '''<!DOCTYPE html>
             section.style.transition = 'all 0.6s ease-out';
             observer.observe(section);
         });
+        
+        // NEW: AI button animation
+        const aiButtons = document.querySelectorAll('.ai-btn');
+        aiButtons.forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                btn.style.transform = 'translateY(-5px) scale(1.05)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translateY(0) scale(1)';
+            });
+        });
     </script>
 </body>
 </html>'''
@@ -239,12 +293,14 @@ with open('index.html', 'w') as f:
 
 # Download
 from google.colab import files
-print("📥 Downloading your professional portfolio...")
+print("📥 Downloading UPDATED portfolio with AI button...")
 files.download('index.html')
 
 print("\n✅ File ready! Now:")
-print("1. Upload this new index.html to GitHub")
-print("2. Replace the old test file")
-print("3. Wait 2 minutes")
-print("4. Visit: https://vaishnavipadmanabhan2006.github.io")
-print("\n🎉 Your portfolio will look amazing!")
+print("1. Upload this NEW index.html to GitHub")
+print("2. Overwrite the old file")
+print("3. Also upload ai_chat.html to same repository")
+print("4. Wait 2 minutes")
+print("5. Visit: https://vaishnavipadmanabhan2006.github.io")
+print("6. Click the AI button!")
+print("\n🎉 Your portfolio now has AI Chat Assistant link!")
